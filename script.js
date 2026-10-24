@@ -124,3 +124,62 @@ if (listingForm) {
             description = `
                 <h3>🌿 உங்கள் தயா
 ```
+// SHG Saathi AI - Saved Products
+
+let savedProducts = JSON.parse(localStorage.getItem("shgProducts")) || [];
+
+function displaySavedProducts() {
+const list = document.getElementById("savedProductsList");
+
+```
+if (!list) return;
+
+if (savedProducts.length === 0) {
+    list.innerHTML = "<p>No products saved yet.</p>";
+    return;
+}
+
+list.innerHTML = "";
+
+savedProducts.forEach(function(product, index) {
+    const card = document.createElement("div");
+    card.className = "feature-card";
+
+    card.innerHTML = `
+        <h3>${product.name}</h3>
+        <p>Quantity: ${product.quantity}</p>
+        <p>Total Cost: ₹${product.totalCost}</p>
+        <p>Cost Per Unit: ₹${product.unitCost}</p>
+        <p>Selling Price Per Unit: ₹${product.sellingPrice}</p>
+        <button onclick="deleteSavedProduct(${index})">Delete</button>
+    `;
+
+    list.appendChild(card);
+});
+```
+
+}
+
+function saveProduct(product) {
+savedProducts.push(product);
+
+```
+localStorage.setItem("shgProducts", JSON.stringify(savedProducts));
+
+displaySavedProducts();
+```
+
+}
+
+function deleteSavedProduct(index) {
+savedProducts.splice(index, 1);
+
+```
+localStorage.setItem("shgProducts", JSON.stringify(savedProducts));
+
+displaySavedProducts();
+```
+
+}
+
+displaySavedProducts();
