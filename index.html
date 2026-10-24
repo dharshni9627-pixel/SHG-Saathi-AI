@@ -1,0 +1,231 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHG Saathi AI | Empowering Women Entrepreneurs</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <a href="#" class="logo">🌿 SHG Saathi AI</a>
+
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#features">Features</a>
+            <a href="#costing">Product Costing</a>
+            <a href="#listing">AI Listing</a>
+        </nav>
+
+        <a href="#costing" class="nav-button">Get Started ↗</a>
+    </header>
+
+    <main>
+        <section class="hero" id="home">
+            <div class="hero-content">
+                <span class="badge">✦ BUILT FOR WOMEN ENTREPRENEURS</span>
+
+                <h1>
+                    Your Products.<br>
+                    Your Business.<br>
+                    <span>Your Growth.</span>
+                </h1>
+
+                <p>
+                    An AI-powered business assistant helping women
+                    Self-Help Groups calculate product costs, find
+                    profitable prices, and create attractive product listings.
+                </p>
+
+                <div class="hero-buttons">
+                    <a href="#costing" class="primary-button">
+                        Calculate Product Cost →
+                    </a>
+                    <a href="#features" class="secondary-button">
+                        Explore Features
+                    </a>
+                </div>
+
+                <div class="hero-note">
+                    🌱 Supporting rural livelihoods through technology
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="visual-card">
+                    <span class="visual-icon">🧵</span>
+                    <h3>From Handmade</h3>
+                    <p>Local skills and creativity</p>
+                    <div class="visual-arrow">↓</div>
+                    <span class="visual-icon">✨</span>
+                    <h3>To High-Value</h3>
+                    <p>Smarter pricing and better listings</p>
+                </div>
+
+                <div class="floating-note">💚 Grow Together</div>
+            </div>
+        </section>
+
+        <section class="features section" id="features">
+            <div class="section-heading">
+                <span class="eyebrow">YOUR DIGITAL BUSINESS PARTNER</span>
+                <h2>Everything you need to <span>grow</span></h2>
+                <p>Simple tools designed for the everyday needs of SHG businesses.</p>
+            </div>
+
+            <div class="feature-grid">
+                <article class="feature-card">
+                    <div class="feature-icon">🧮</div>
+                    <h3>Smart Product Costing</h3>
+                    <p>Calculate material, labour, packaging and transport costs to understand your true production cost.</p>
+                    <a href="#costing">Calculate costs →</a>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">✨</div>
+                    <h3>AI Listing Generator</h3>
+                    <p>Create attractive product descriptions in English or Tamil for online shops and social media.</p>
+                    <a href="#listing">Create listings →</a>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Pricing Assistant</h3>
+                    <p>Explore selling prices and estimated profits to make more informed business decisions.</p>
+                    <a href="#costing">Explore pricing →</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="workspace section" id="costing">
+            <div class="section-heading">
+                <span class="eyebrow">START WITH YOUR NUMBERS</span>
+                <h2>Product Cost Calculator</h2>
+                <p>Enter your production expenses to estimate a selling price.</p>
+            </div>
+
+            <div class="workspace-card">
+                <form id="costForm">
+                    <div class="form-grid">
+                        <label>
+                            Product Name
+                            <input id="productName" type="text" placeholder="e.g. Handmade candles" required>
+                        </label>
+
+                        <label>
+                            Quantity Produced
+                            <input id="quantity" type="number" min="1" value="10" required>
+                        </label>
+
+                        <label>
+                            Raw Materials Cost (₹)
+                            <input id="materials" type="number" min="0" value="200" required>
+                        </label>
+
+                        <label>
+                            Labour Cost (₹)
+                            <input id="labour" type="number" min="0" value="100" required>
+                        </label>
+
+                        <label>
+                            Packaging Cost (₹)
+                            <input id="packaging" type="number" min="0" value="50" required>
+                        </label>
+
+                        <label>
+                            Transport Cost (₹)
+                            <input id="transport" type="number" min="0" value="30" required>
+                        </label>
+
+                        <label>
+                            Other Expenses (₹)
+                            <input id="other" type="number" min="0" value="20" required>
+                        </label>
+
+                        <label>
+                            Desired Profit Margin (%)
+                            <input id="margin" type="number" min="0" max="500" value="30" required>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="primary-button">
+                        Calculate My Price →
+                    </button>
+                </form>
+
+                <div id="result" class="result-box" aria-live="polite">
+                    Your cost breakdown will appear here.
+                </div>
+            </div>
+        </section>
+
+        <section class="workspace section" id="listing">
+            <div class="section-heading">
+                <span class="eyebrow">TELL YOUR PRODUCT'S STORY</span>
+                <h2>AI Listing Studio</h2>
+                <p>Prepare a product description for your customers.</p>
+            </div>
+
+            <div class="workspace-card">
+                <form id="listingForm">
+                    <div class="form-grid">
+                        <label>
+                            Product Name
+                            <input id="listingName" type="text" placeholder="e.g. Natural herbal soap" required>
+                        </label>
+
+                        <label>
+                            Product Category
+                            <select id="category">
+                                <option>Handicrafts</option>
+                                <option>Food Products</option>
+                                <option>Clothing and Textiles</option>
+                                <option>Beauty and Wellness</option>
+                                <option>Home Decor</option>
+                                <option>Other</option>
+                            </select>
+                        </label>
+
+                        <label class="full-width">
+                            Materials or Ingredients
+                            <input id="materialsUsed" type="text" placeholder="e.g. Coconut oil, herbs, cotton">
+                        </label>
+
+                        <label class="full-width">
+                            What makes your product special?
+                            <textarea id="featuresInput" rows="3" placeholder="Describe its quality, benefits or handmade features"></textarea>
+                        </label>
+
+                        <label>
+                            Listing Language
+                            <select id="language">
+                                <option value="English">English</option>
+                                <option value="Tamil">Tamil</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="primary-button">
+                        Generate Product Listing ✨
+                    </button>
+                </form>
+
+                <div id="listingOutput" class="result-box" aria-live="polite">
+                    Your product listing will appear here.
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <a href="#home" class="logo">🌿 SHG Saathi AI</a>
+        <p>Smart Pricing. Better Livelihoods.</p>
+        <p class="footer-small">Built to support women-led businesses and rural livelihoods.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+```
