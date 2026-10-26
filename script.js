@@ -21,9 +21,14 @@ const replacements = {
 '"': """,
 "'": "'"
 };
-return replacements[character];
+
+```
+    return replacements[character];
 });
+```
+
 }
+
 
 // Load products saved in this browser
 let savedProducts = [];
