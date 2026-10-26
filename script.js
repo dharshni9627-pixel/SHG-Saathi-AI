@@ -1,282 +1,242 @@
+```javascript
 "use strict";
 
-// ====================================
-// SHG SAATHI AI
-// ====================================
-
+// Format money in Indian Rupees
 function formatRupees(amount) {
-return "Rs. " + Number(amount).toFixed(2);
+    return "₹" + Number(amount).toFixed(2);
 }
 
+// Safely display text
 function escapeHTML(value) {
-return String(value)
-.split("&").join("&")
-.split("<").join("<")
-.split(">").join(">")
-.split('"').join(""")
-.split("'").join("'");
+    return String(value)
+        .split("&").join("&amp;")
+        .split("<").join("&lt;")
+        .split(">").join("&gt;")
+        .split('"').join("&quot;")
+        .split("'").join("&#39;");
 }
 
-// ====================================
-// LOAD SAVED PRODUCTS
-// ====================================
-
+// Get saved products from browser storage
 let savedProducts = [];
 
 try {
-savedProducts = JSON.parse(localStorage.getItem("shgProducts") || "[]");
+    const storedProducts = localStorage.getItem("shgProducts");
 
-```
-if (!Array.isArray(savedProducts)) {
+    if (storedProducts) {
+        savedProducts = JSON.parse(storedProducts);
+
+        if (!Array.isArray(savedProducts)) {
+            savedProducts = [];
+        }
+    }
+} catch (error) {
     savedProducts = [];
 }
-```
 
-} catch (error) {
-savedProducts = [];
+// Save products in browser storage
+function storeProducts() {
+    try {
+        localStorage.setItem("shgProducts", JSON.stringify(savedProducts));
+    } catch (error) {
+        console.error("Unable to save products:", error);
+    }
 }
 
-// ====================================
-// DISPLAY SAVED PRODUCTS
-// ====================================
-
-function displaySavedProducts() {
-const list = document.getElementById("savedProductsList");
-
-```
-if (!list) {
-    return;
-}
-
-list.innerHTML = "";
-
-if (savedProducts.length === 0) {
-    list.textContent = "No products saved yet. Calculate a product cost to get started.";
-    return;
-}
-
-savedProducts.forEach(function (product, index) {
-    const card = document.createElement("div");
-    card.className = "feature-card";
-
-    const title = document.createElement("h3");
-    title.textContent = "Product: " + product.name;
-    card.appendChild(title);
-
-    const details = [
-        "Quantity: " + product.quantity,
-        "Total cost: " + formatRupees(product.totalCost),
-        "Cost per unit: " + formatRupees(product.unitCost),
-        "Selling price per unit: " + formatRupees(product.sellingPrice),
-        "Estimated batch profit: " + formatRupees(product.batchProfit)
-    ];
-
-    details.forEach(function (detail) {
-        const paragraph = document.createElement("p");
-        paragraph.textContent = detail;
-        card.appendChild(paragraph);
-    });
-
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete Product";
-    deleteButton.type = "button";
-
-    deleteButton.addEventListener("click", function () {
-        savedProducts.splice(index, 1);
-
-        try {
-            localStorage.setItem("shgProducts", JSON.stringify(savedProducts));
-            displaySavedProducts();
-        } catch (error) {
-            alert("Unable to update saved products.");
-        }
-    });
-
-    card.appendChild(deleteButton);
-    list.appendChild(card);
-});
-```
-
-}
-
-// ====================================
-// SAVE PRODUCT
-// ====================================
-
-function saveProduct(product) {
-savedProducts.push(product);
-
-```
-try {
-    localStorage.setItem("shgProducts", JSON.stringify(savedProducts));
-    displaySavedProducts();
-    alert("Product calculated and saved successfully!");
-} catch (error) {
-    savedProducts.pop();
-    alert("Could not save the product. Check browser storage.");
-}
-```
-
-}
-
-// ====================================
-// COST CALCULATOR
-// ====================================
-
+// PRODUCT COST CALCULATOR
 const costForm = document.getElementById("costForm");
 
 if (costForm) {
-costForm.addEventListener("submit", function (event) {
-event.preventDefault();
+    costForm.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-```
-    const productName = document.getElementById("productName").value.trim();
-    const quantity = Number(document.getElementById("quantity").value);
-    const materials = Number(document.getElementById("materials").value);
-    const labour = Number(document.getElementById("labour").value);
-    const packaging = Number(document.getElementById("packaging").value);
-    const transport = Number(document.getElementById("transport").value);
-    const other = Number(document.getElementById("other").value);
-    const margin = Number(document.getElementById("margin").value);
+        const productName = document.getElementById("productName").value.trim();
+        const quantity = Number(document.getElementById("quantity").value);
+        const materials = Number(document.getElementById("materials").value);
+        const labour = Number(document.getElementById("labour").value);
+        const packaging = Number(document.getElementById("packaging").value);
+        const transport = Number(document.getElementById("transport").value);
+        const other = Number(document.getElementById("other").value);
+        const margin = Number(document.getElementById("margin").value);
 
-    const costs = [materials, labour, packaging, transport, other];
+        const result = document.getElementById("result");
 
-    if (
-        productName === "" ||
-        !Number.isFinite(quantity) ||
-        quantity < 1 ||
-        !Number.isInteger(quantity) ||
-        !Number.isFinite(margin) ||
-        margin < 0 ||
-        margin > 500 ||
-        costs.some(function (cost) {
-            return !Number.isFinite(cost) || cost < 0;
-        })
-    ) {
-        alert("Enter a product name, valid quantity, non-negative costs, and a margin between 0 and 500.");
-        return;
-    }
+        if (!productName) {
+            alert("Please enter a product name.");
+            return;
+        }
 
-    const totalCost = materials + labour + packaging + transport + other;
-    const unitCost = totalCost / quantity;
-    const profitPerUnit = unitCost * margin / 100;
-    const sellingPrice = unitCost + profitPerUnit;
-    const batchProfit = profitPerUnit * quantity;
+        if (!Number.isFinite(quantity) || quantity < 1) {
+            alert("Quantity must be at least 1.");
+            return;
+        }
 
-    const result = document.getElementById("result");
+        const costs = [materials, labour, packaging, transport, other];
 
-    if (!result) {
-        alert("Cannot find the result area. Check the HTML element with id=result.");
-        return;
-    }
+        for (let i = 0; i < costs.length; i++) {
+            if (!Number.isFinite(costs[i]) || costs[i] < 0) {
+                alert("Please enter valid costs. Costs cannot be negative.");
+                return;
+            }
+        }
 
-    result.innerHTML =
-        "<h3>Your Cost Report</h3>" +
-        "<p>Product: <strong>" + escapeHTML(productName) + "</strong></p>" +
-        "<p>Total production cost: <strong>" + formatRupees(totalCost) + "</strong></p>" +
-        "<p>Quantity: <strong>" + quantity + "</strong></p>" +
-        "<p>Cost per product: <strong>" + formatRupees(unitCost) + "</strong></p>" +
-        "<p>Profit per product: <strong>" + formatRupees(profitPerUnit) + "</strong></p>" +
-        "<p>Selling price per product: <strong>" + formatRupees(sellingPrice) + "</strong></p>" +
-        "<p>Estimated batch profit: <strong>" + formatRupees(batchProfit) + "</strong></p>";
+        if (!Number.isFinite(margin) || margin < 0 || margin > 500) {
+            alert("Profit margin must be between 0 and 500%.");
+            return;
+        }
 
-    saveProduct({
-        name: productName,
-        quantity: quantity,
-        totalCost: Number(totalCost.toFixed(2)),
-        unitCost: Number(unitCost.toFixed(2)),
-        sellingPrice: Number(sellingPrice.toFixed(2)),
-        batchProfit: Number(batchProfit.toFixed(2))
+        const totalCost = materials + labour + packaging + transport + other;
+        const costPerProduct = totalCost / quantity;
+        const profitPerProduct = costPerProduct * margin / 100;
+        const sellingPrice = costPerProduct + profitPerProduct;
+        const batchProfit = profitPerProduct * quantity;
+
+        result.innerHTML = `
+            <div class="feature-card">
+                <h3>📊 Cost Calculation Result</h3>
+                <p><strong>Product:</strong> ${escapeHTML(productName)}</p>
+                <p><strong>Quantity:</strong> ${quantity}</p>
+                <p><strong>Total Batch Cost:</strong> ${formatRupees(totalCost)}</p>
+                <p><strong>Cost per Product:</strong> ${formatRupees(costPerProduct)}</p>
+                <p><strong>Profit per Product:</strong> ${formatRupees(profitPerProduct)}</p>
+                <p><strong>Suggested Selling Price:</strong> ${formatRupees(sellingPrice)}</p>
+                <p><strong>Total Batch Profit:</strong> ${formatRupees(batchProfit)}</p>
+                <button type="button" id="saveProductButton">💾 Save Product</button>
+            </div>
+        `;
+
+        document.getElementById("saveProductButton").addEventListener("click", function () {
+            const product = {
+                id: Date.now(),
+                name: productName,
+                quantity: quantity,
+                totalCost: totalCost,
+                costPerProduct: costPerProduct,
+                sellingPrice: sellingPrice,
+                batchProfit: batchProfit
+            };
+
+            savedProducts.push(product);
+            storeProducts();
+            displaySavedProducts();
+
+            this.textContent = "✓ Product Saved";
+            this.disabled = true;
+        });
     });
-});
-```
-
 }
 
-// ====================================
-// PRODUCT LISTING GENERATOR
-// ====================================
+// MY PRODUCTS
+function displaySavedProducts() {
+    const list = document.getElementById("savedProductsList");
 
+    if (!list) {
+        return;
+    }
+
+    list.innerHTML = "";
+
+    if (savedProducts.length === 0) {
+        list.textContent = "No saved products yet. Calculate a cost and save your first product!";
+        return;
+    }
+
+    savedProducts.forEach(function (product) {
+        const card = document.createElement("div");
+        card.className = "feature-card";
+
+        const title = document.createElement("h3");
+        title.textContent = "📦 " + product.name;
+
+        const quantity = document.createElement("p");
+        quantity.textContent = "Quantity: " + product.quantity;
+
+        const total = document.createElement("p");
+        total.textContent = "Total Cost: " + formatRupees(product.totalCost);
+
+        const price = document.createElement("p");
+        price.textContent = "Selling Price per Product: " + formatRupees(product.sellingPrice);
+
+        const profit = document.createElement("p");
+        profit.textContent = "Batch Profit: " + formatRupees(product.batchProfit);
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.textContent = "🗑️ Delete";
+
+        deleteButton.addEventListener("click", function () {
+            savedProducts = savedProducts.filter(function (item) {
+                return item.id !== product.id;
+            });
+
+            storeProducts();
+            displaySavedProducts();
+        });
+
+        card.appendChild(title);
+        card.appendChild(quantity);
+        card.appendChild(total);
+        card.appendChild(price);
+        card.appendChild(profit);
+        card.appendChild(deleteButton);
+
+        list.appendChild(card);
+    });
+}
+
+// PRODUCT LISTING GENERATOR
 const listingForm = document.getElementById("listingForm");
 
 if (listingForm) {
-listingForm.addEventListener("submit", function (event) {
-event.preventDefault();
+    listingForm.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-```
-    const name = document.getElementById("listingName").value.trim();
-    const category = document.getElementById("category").value.trim();
-    const materials = document.getElementById("materialsUsed").value.trim();
-    const features = document.getElementById("featuresInput").value.trim();
-    const language = document.getElementById("language").value;
-    const output = document.getElementById("listingOutput");
+        const name = document.getElementById("listingName").value.trim();
+        const category = document.getElementById("category").value;
+        const materials = document.getElementById("materialsUsed").value.trim();
+        const features = document.getElementById("featuresInput").value.trim();
+        const language = document.getElementById("language").value;
+        const output = document.getElementById("listingOutput");
 
-    if (!name || !category || !materials || !features) {
-        alert("Please fill in all product listing fields.");
-        return;
-    }
+        if (!name) {
+            alert("Please enter the product name.");
+            return;
+        }
 
-    let listing;
+        const listing = [
+            "PRODUCT: " + name,
+            "CATEGORY: " + (category || "Handmade Products"),
+            "DESCRIPTION: " + name + " is a handmade product prepared with care by a Self-Help Group.",
+            "MATERIALS USED: " + (materials || "Quality materials"),
+            "KEY FEATURES: " + (features || "Handmade, useful, and carefully prepared"),
+            "LANGUAGE: " + (language || "English"),
+            "",
+            "WHY BUY THIS PRODUCT?",
+            "Support local women entrepreneurs and help strengthen rural livelihoods.",
+            "",
+            "Note: Please verify all product claims before publishing this listing."
+        ].join("\n");
 
-    if (language.toLowerCase().includes("tamil")) {
-        listing =
-            name + "\n\n" +
-            "வகை: " + category + "\n" +
-            "பயன்படுத்திய பொருட்கள்: " + materials + "\n" +
-            "சிறப்பம்சங்கள்: " + features + "\n\n" +
-            "பெண்கள் சுய உதவிக் குழுவினரால் தயாரிக்கப்பட்ட தயாரிப்பு. உள்ளூர் தொழில்முனைவோரை ஆதரியுங்கள்!";
-    } else {
-        listing =
-            name + "\n\n" +
-            "Category: " + category + "\n" +
-            "Materials: " + materials + "\n" +
-            "Features: " + features + "\n\n" +
-            "Proudly made by a Women's Self-Help Group. Support local businesses!";
-    }
+        output.textContent = listing;
 
-    output.textContent = listing;
+        const copyButton = document.createElement("button");
+        copyButton.type = "button";
+        copyButton.textContent = "📋 Copy Listing";
+        copyButton.addEventListener("click", async function () {
+            try {
+                await navigator.clipboard.writeText(listing);
+                copyButton.textContent = "✓ Copied!";
+            } catch (error) {
+                alert("Please select and copy the listing text manually.");
+            }
+        });
 
-    const copyButton = document.createElement("button");
-    copyButton.type = "button";
-    copyButton.textContent = "Copy Listing";
-
-    copyButton.addEventListener("click", function () {
-        copyListing(listing);
+        output.appendChild(document.createElement("br"));
+        output.appendChild(copyButton);
     });
+}
 
-    output.appendChild(document.createElement("br"));
-    output.appendChild(document.createElement("br"));
-    output.appendChild(copyButton);
+// Display existing products when the page opens
+document.addEventListener("DOMContentLoaded", function () {
+    displaySavedProducts();
 });
 ```
-
-}
-
-// ====================================
-// COPY LISTING
-// ====================================
-
-function copyListing(listing) {
-const textArea = document.createElement("textarea");
-textArea.value = listing;
-document.body.appendChild(textArea);
-textArea.select();
-
-```
-try {
-    document.execCommand("copy");
-    alert("Product listing copied!");
-} catch (error) {
-    alert("Please select and copy the listing manually.");
-}
-
-textArea.remove();
-```
-
-}
-
-// ====================================
-// INITIALIZE
-// ====================================
-
-displaySavedProducts();
